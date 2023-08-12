@@ -1,40 +1,12 @@
 const cardapioCompleto = {
-    cafe: {
-        descricao: "Café",
-        valor: "R$ 3,00",
-    },
-    chantily: {
-        descricao: "Chantily (extra do Café)",
-        valor: "R$ 1,50",
-        isExtra: true,
-        ref: "cafe"
-    },
-    suco: {
-        descricao: "Suco Natural",
-        valor: "R$ 6,20",
-    },
-    sanduiche: {
-        descricao: "Sanduíche",
-        valor: "R$ 6,50",
-    },
-    queijo: {
-        descricao: "Queijo (extra do Sanduíche)",
-        valor: "R$ 2,00",
-        isExtra: true,
-        ref: "sanduiche"
-    },
-    salgado: {
-        descricao: "Salgado",
-        valor: "R$ 7,25",
-    },
-    combo1: {
-        descricao: "1 Suco e 1 Sanduíche",
-        valor: "R$ 9,50",
-    },
-    combo2: {
-        descricao: "1 Café e 1 Sanduíche",
-        valor: "R$ 7,50",
-    },
+    cafe: { descricao: "Café", valor: "R$ 3,00" },
+    chantily: { descricao: "Chantily (extra do Café)", valor: "R$ 1,50", isExtra: true, ref: "cafe" },
+    suco: { descricao: "Suco Natural", valor: "R$ 6,20" },
+    sanduiche: { descricao: "Sanduíche", valor: "R$ 6,50" },
+    queijo: { descricao: "Queijo (extra do Sanduíche)", valor: "R$ 2,00", isExtra: true, ref: "sanduiche" },
+    salgado: { descricao: "Salgado", valor: "R$ 7,25" },
+    combo1: { descricao: "1 Suco e 1 Sanduíche", valor: "R$ 9,50" },
+    combo2: { descricao: "1 Café e 1 Sanduíche", valor: "R$ 7,50" }
 };
 
 class CaixaDaLanchonete {
@@ -53,10 +25,7 @@ class CaixaDaLanchonete {
 
         const carrinhoDeCompras = itens.map((item) => {
             const [codigo, quantidade] = item.split(",");
-            return {
-                codigo,
-                quantidade: parseInt(quantidade),
-            };
+            return { codigo, quantidade: parseInt(quantidade) };
         });
 
         let valorTotal = 0;
