@@ -1,87 +1,102 @@
-/*class CaixaDaLanchonete {
-
-    calcularValorDaCompra(metodoDePagamento, itens) {
-        return "";
-    }
-
-}*/
+const cardapioCompleto = {
+    cafe: {
+        descricao: "Café",
+        valor: "R$ 3,00",
+    },
+    chantily: {
+        descricao: "Chantily (extra do Café)",
+        valor: "R$ 1,50",
+        isExtra: true,
+        ref: "cafe"
+    },
+    suco: {
+        descricao: "Suco Natural",
+        valor: "R$ 6,20",
+    },
+    sanduiche: {
+        descricao: "Sanduíche",
+        valor: "R$ 6,50",
+    },
+    queijo: {
+        descricao: "Queijo (extra do Sanduíche)",
+        valor: "R$ 2,00",
+        isExtra: true,
+        ref: "sanduiche"
+    },
+    salgado: {
+        descricao: "Salgado",
+        valor: "R$ 7,25",
+    },
+    combo1: {
+        descricao: "1 Suco e 1 Sanduíche",
+        valor: "R$ 9,50",
+    },
+    combo2: {
+        descricao: "1 Café e 1 Sanduíche",
+        valor: "R$ 7,50",
+    },
+};
 
 class CaixaDaLanchonete {
-    constructor() {
-        this.CARDAPIO = [
-            { codigo: 'cafe', descricao: 'Café', valor: 3.00 },
-            { codigo: 'chantily', descricao: 'Chantily (extra do Café)', valor: 1.50 },
-            { codigo: 'suco', descricao: 'Suco Natural', valor: 6.20 },
-            { codigo: 'sanduiche', descricao: 'Sanduíche', valor: 6.50 },
-            { codigo: 'queijo', descricao: 'Queijo (extra do Sanduíche)', valor: 2.00 },
-            { codigo: 'salgado', descricao: 'Salgado', valor: 7.25 },
-            { codigo: 'combo1', descricao: '1 Suco e 1 Sanduíche', valor: 9.50 },
-            { codigo: 'combo2', descricao: '1 Café e 1 Sanduíche', valor: 7.50 }
-        ];
+    constructor() { }
 
-        this.FORMAS_DE_PAGAMENTO = ['dinheiro', 'debito', 'credito'];
-    }
+    calcularValorDaCompra(metodoPagamento, itens) {
+        const metodosPagamento = ["dinheiro", "debito", "credito"];
 
-    calcularValorDaCompra(metodoDePagamento, itens) {
-        if (!this.FORMAS_DE_PAGAMENTO.includes(metodoDePagamento)) {
-            return 'Forma de pagamento inválida!';
+        if (!metodosPagamento.includes(metodoPagamento)) {
+            return "Forma de pagamento inválida!";
         }
 
         if (itens.length === 0) {
-            return 'Não há itens no carrinho de compra!';
+            return "Não há itens no carrinho de compra!";
         }
 
-        let total = 0;
-        const carrinho = {};
+        const carrinhoDeCompras = itens.map((item) => {
+            const [codigo, quantidade] = item.split(",");
+            return {
+                codigo,
+                quantidade: parseInt(quantidade),
+            };
+        });
 
-        for (const item of itens) {
-            const [codigo, quantidade, extraDe] = item.split(',');
+        let valorTotal = 0;
 
-            const menu_item = this.CARDAPIO.find(menu => menu.codigo === codigo);
-            if (!menu_item) {
-                return 'Item inválido!';
+        for (const item of carrinhoDeCompras) {
+            const { codigo, quantidade } = item;
+
+            const itemDetalhado = cardapioCompleto[codigo];
+
+            if (!itemDetalhado) {
+                return "Item inválido!";
             }
 
-            if (!carrinho[codigo]) {
-                carrinho[codigo] = { quantidade: 0, extra: false };
+            if (quantidade === 0) {
+                return "Quantidade inválida!";
             }
 
-            carrinho[codigo].quantidade += parseInt(quantidade);
-
-            if (extraDe) {
-                carrinho[codigo].extra = true;
-                carrinho[extraDe] = { quantidade: 1, extra: false };
+            if (itemDetalhado.isExtra) {
+                if (!carrinhoDeCompras.some((carrinhoItem) => carrinhoItem.codigo === itemDetalhado.ref)) {
+                    return "Item extra não pode ser pedido sem o principal";
+                }
             }
 
-
+            const valor = parseFloat(
+                itemDetalhado.valor.replace("R$", "").replace(",", ".")
+            );
+            valorTotal += valor * quantidade;
         }
 
-        for (const itemCodigo in carrinho) {
-            const itemInfo = carrinho[itemCodigo];
-            const menu_item = this.CARDAPIO.find(menu => menu.codigo === itemCodigo);
+        const descontos = {
+            dinheiro: 0.95,
+            credito: 1.03,
+        };
 
-            total += menu_item.valor * itemInfo.quantidade;
-
-            if (itemInfo.extra) {
-                return 'Item extra não pode ser pedido sem o principal';
-            }
+        if (descontos[metodoPagamento]) {
+            valorTotal *= descontos[metodoPagamento];
         }
 
-        if (metodoDePagamento === 'dinheiro') {
-            total *= 0.95; // Desconto de 5% para pagamento em dinheiro
-        } else if (metodoDePagamento === 'credito') {
-            total *= 1.03; // Acréscimo de 3% para pagamento a crédito
-        }
-
-
-        const valor = 'R$ ' + total.toFixed(2).replace('.', ',');
-
-        if (valor == "R$ 0,00") {
-            return "Quantidade inválida!"
-        }
-
-
-        return valor;
+        const valorFinal = valorTotal.toFixed(2).replace(".", ",");
+        return `R$ ${valorFinal}`;
     }
 }
 
